@@ -1,0 +1,64 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5">
+  <h2 class="text-center">Sign Up</h2>
+
+  <form action="/signup" method="POST" class="mt-4 needs-validation" novalidate>
+    <div class="mb-3">
+      <label class="form-label" for="name">Name</label>
+
+      <input
+        type="text"
+        name="name"
+        id="name"
+        placeholder="e.g. Pratham"
+        class="form-control input-style"
+        required
+        minlength="3"
+      />
+
+      <div class="valid-feedback">👍 Nice name!</div>
+      <div class="invalid-feedback">
+        Please enter your name (at least 3 characters).
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+
+      <input
+        type="email"
+        name="email"
+        id="email"
+        placeholder="e.g. pratham@gmail.com"
+        class="form-control input-style"
+        required
+      />
+
+      <div class="valid-feedback">✅ Email looks valid!</div>
+      <div class="invalid-feedback">
+        Please enter a valid email address (e.g. name@gmail.com).
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+
+      <input
+        type="password"
+        name="password"
+        id="password"
+        class="form-control input-style"
+        placeholder="Min 6 characters"
+        required
+        minlength="6"
+      />
+
+      <div class="valid-feedback">🔐 Strong enough!</div>
+      <div class="invalid-feedback">
+        Password must be at least 6 characters long.
+      </div>
+    </div>
+
+    <button class="btn btn-primary w-100">Register</button>
+  </form>
+</div>
