@@ -13,6 +13,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const flash = require("connect-flash");
+const { signupSchema } = require("./schema.js");
 
 // 🔗 DATABASE CONNECTION
 mongoose
@@ -60,6 +61,13 @@ app.get("/signup", (req, res) => {
 // submit signup form
 app.post("/signup", async (req, res) => {
   try {
+    // ✅ Validate first
+    const { error } = signupSchema.validate(req.body);
+
+    if (error) {
+      req.flash("error", error.details[0].message);
+      return res.redirect("/signup");
+    }
     const { username, email, password } = req.body;
 
     const newUser = new User({ username, email });
@@ -82,12 +90,22 @@ app.get("/login", async (req, res) => {
 
 app.post(
   "/login",
+  (req, res, next) => {
+    const { error } = loginSchema.validate(req.body);
+
+    if (error) {
+      req.flash("error", error.details[0].message);
+      return res.redirect("/login");
+    }
+
+    next();
+  },
   passport.authenticate("local", {
     failureRedirect: "/login",
     failureFlash: true,
   }),
   (req, res) => {
-    req.flash("success", "Welcome back! Logged in successfully 🎉");
+    req.flash("success", "Welcome back 🎉");
     res.redirect("/");
   },
 );
