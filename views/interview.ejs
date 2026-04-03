@@ -1,0 +1,57 @@
+<% layout("/layouts/boilerplate") %>
+
+<div
+  class="d-flex justify-content-center align-items-center"
+  style="min-height: 85vh"
+>
+  <div
+    class="card shadow-lg p-5"
+    style="max-width: 700px; width: 100%; border-radius: 18px"
+  >
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="text-muted">Interview Question</h5>
+      <span class="badge bg-dark">Practice Mode</span>
+    </div>
+
+    <!-- QUESTION -->
+    <h4 class="fw-bold mb-4"><%= question %></h4>
+
+    <!-- FORM -->
+    <form action="/interview" method="POST">
+      <input type="hidden" name="questionId" value="<%= id %>" />
+
+      <!-- TEXTAREA -->
+      <div class="mb-3">
+        <textarea
+          name="answer"
+          class="form-control"
+          id="charCount"
+          rows="5"
+          placeholder="Write your answer here..."
+          required
+          style="resize: none"
+        ></textarea>
+      </div>
+
+      <p class="text-muted small mt-2">Characters: <span id="count">0</span></p>
+      <!-- ACTION BUTTONS -->
+      <div class="d-flex justify-content-between">
+        <a href="/interview" class="btn btn-outline-secondary"> ⬅ Back </a>
+
+        <button class="btn btn-dark">Submit Answer 🚀</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const displayCount = document.getElementById("count");
+  const inputField = document.getElementById("charCount");
+  inputField.addEventListener("input", function () {
+    const length = inputField.value.length;
+
+    displayCount.textContent = length;
+    // console.log(length);
+  });
+</script>

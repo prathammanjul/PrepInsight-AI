@@ -6,6 +6,7 @@ const app = express();
 
 // Models & Utils
 const Question = require("./models/questionSchema");
+const Answer = require("./models/answer");
 const User = require("./models/user.js");
 
 const { loginSchema, signupSchema } = require("./schema.js");
@@ -146,6 +147,29 @@ app.get(
       question: randomQ.question,
       id: randomQ._id,
     });
+  }),
+);
+
+app.post(
+  "/interview",
+  wrapAsync(async (req, res) => {
+    const { answer, questionId } = req.body;
+
+    // user login check
+    if (!req.user) {
+      res.flash("error", "Please login first!");
+      return res.redirect("/login");
+    }
+
+    const newAnswer = new Answer({
+      user: req.user._id,
+      question: questionId,
+      answer,
+    });
+
+    newAnswer.save();
+    req.flash("success", "Answer submitted successfully ✅");
+    res.redirect("/interview");
   }),
 );
 
