@@ -131,8 +131,12 @@ app.get("/logout", (req, res) => {
 
 // ------------------ INTERVIEW ------------------
 
+app.get("/interview", (req, res) => {
+  res.render("interviewHome");
+});
+
 app.get(
-  "/interview",
+  "/interview/start",
   wrapAsync(async (req, res) => {
     const questions = await Question.find();
 
@@ -154,7 +158,7 @@ app.use((req, res, next) => {
 // ------------------ ERROR HANDLER ------------------
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  // console.log(err);
 
   const { statusCode = 500, message = "Something went wrong!" } = err;
 

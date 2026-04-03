@@ -1,24 +1,30 @@
 <% layout("/layouts/boilerplate") %>
-<body>
-  <div class="container text-center mt-5">
-    <h1>AI Interview Prep + Resume Analyzer 🚀</h1>
-    <p class="mt-3">Practice interviews and improve with AI</p>
 
-    <div class="mt-4">
+<div class="container text-center mt-5">
+  <h1>AI Interview Prep + Resume Analyzer 🚀</h1>
+  <p class="mt-3">Practice interviews and improve with AI</p>
+
+  <!-- AUTH BUTTONS -->
+  <div class="mt-4">
+    <% if (!currUser) { %>
       <a href="/signup" class="btn btn-primary">Sign Up</a>
       <a href="/login" class="btn btn-success">Login</a>
-    </div>
+    <% } else { %>
+      <a href="/logout" class="btn btn-danger">Logout</a>
+    <% } %>
   </div>
 
-  <!-- NEW SECTION -->
-   <%if(currUser) { %>
-  <a href="/interview" class="btn btn-dark btn-lg">
-    🚀 Start Interview
-  </a>
-  <% }else{ %>
-     <a href="/login" class="btn btn-warning">
+  
+  <!-- INTERVIEW CTA -->
+  <div class="mt-4">
+    <% if (currUser) { %>
+      <a href="/interview" class="btn btn-dark btn-lg">
+        🚀 Start Interview
+      </a>
+    <% } else { %>
+      <a href="/login" class="btn btn-warning">
         Login to Start Interview
       </a>
-
-  <% } %>
-</body>
+    <% } %>
+  </div>
+</div>
