@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
+const Question = require("./models/questionSchema");
+const { loginSchema } = require("./schema");
 const ejsMate = require("ejs-mate");
 
 const app = express();
@@ -45,6 +47,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
   next();
 });
 
@@ -61,7 +64,7 @@ app.get("/signup", (req, res) => {
 // submit signup form
 app.post("/signup", async (req, res) => {
   try {
-    // ✅ Validate first
+    // Validate
     const { error } = signupSchema.validate(req.body);
 
     if (error) {

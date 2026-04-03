@@ -9,4 +9,16 @@
       <a href="/login" class="btn btn-success">Login</a>
     </div>
   </div>
+
+  <!-- NEW SECTION -->
+   <%if(currUser) { %>
+  <a href="/interview" class="btn btn-dark btn-lg">
+    🚀 Start Interview
+  </a>
+  <% }else{ %>
+     <a href="/login" class="btn btn-warning">
+        Login to Start Interview
+      </a>
+
+  <% } %>
 </body>
