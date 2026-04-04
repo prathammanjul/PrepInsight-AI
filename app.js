@@ -135,6 +135,7 @@ app.get("/logout", (req, res) => {
 app.get("/interview", (req, res) => {
   res.render("interviewHome");
 });
+
 app.get(
   "/interview/start",
   wrapAsync(async (req, res) => {
@@ -177,6 +178,12 @@ app.post(
     res.redirect("/interview/start");
   }),
 );
+
+app.get("/interview/:topic", (req, res) => {
+  const { topic } = req.params;
+
+  res.render("topic", { topic });
+});
 
 app.get(
   "/answers",
