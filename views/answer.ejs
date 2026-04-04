@@ -1,0 +1,27 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">📊 My Answers</h2>
+
+  <% if (answers.length === 0) { %>
+    <h5 class="text-center text-muted">No answers yet</h5>
+  <% } %>
+
+  <% answers.forEach(ans => { %>
+    <div class="card mb-3 shadow-sm p-3">
+      
+      <h5 class="fw-bold">
+         <%= ans.question.question %>
+      </h5>
+
+      <p class="mt-2">
+        💬 <%= ans.answer %>
+      </p>
+
+      <small class="text-muted">
+        Submitted on: <%= ans.createdAt.toDateString() %>
+      </small>
+
+    </div>
+  <% }) %>
+</div>

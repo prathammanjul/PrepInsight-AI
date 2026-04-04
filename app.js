@@ -173,6 +173,21 @@ app.post(
   }),
 );
 
+app.get(
+  "/answers",
+  wrapAsync(async (req, res) => {
+    if (!req.user) {
+      req.flash("error", "Please login first!");
+      return res.redirect("/login");
+    }
+
+    const answers = await Answer.find({ user: req.user._id })
+      .populate("question")
+      .populate("user");
+    res.render("answer", { answers });
+  }),
+);
+
 // ------------------ 404 ------------------
 
 app.use((req, res, next) => {
