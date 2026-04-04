@@ -135,11 +135,17 @@ app.get("/logout", (req, res) => {
 app.get("/interview", (req, res) => {
   res.render("interviewHome");
 });
-
 app.get(
   "/interview/start",
   wrapAsync(async (req, res) => {
-    const questions = await Question.find();
+    const topic = req.query.topic || "backend";
+
+    const questions = await Question.find({ topic });
+
+    if (questions.length === 0) {
+      req.flash("error", "No questions found!");
+      return res.redirect("/interview");
+    }
 
     const randomQ = questions[Math.floor(Math.random() * questions.length)];
 
@@ -149,7 +155,6 @@ app.get(
     });
   }),
 );
-
 app.post(
   "/interview",
   wrapAsync(async (req, res) => {
@@ -167,9 +172,9 @@ app.post(
       answer,
     });
 
-    newAnswer.save();
+    await newAnswer.save();
     req.flash("success", "Answer submitted successfully ✅");
-    res.redirect("/interview");
+    res.redirect("/interview/start");
   }),
 );
 
