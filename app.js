@@ -141,29 +141,48 @@ app.get(
   wrapAsync(async (req, res) => {
     const topic = req.query.topic || "backend";
 
+    // 🔹 get topic-based questions
     const questions = await Question.find({ topic });
 
-    if (questions.length === 0) {
-      req.flash("error", "No questions found!");
-      return res.redirect("/interview");
+    // 🔹 initialize session storage
+    if (!req.session.askedQuestions) {
+      req.session.askedQuestions = [];
     }
 
-    const randomQ = questions[Math.floor(Math.random() * questions.length)];
+    // 🔹 filter already asked questions
+    const remainingQuestions = questions.filter(
+      (q) => !req.session.askedQuestions.includes(q._id.toString()),
+    );
+
+    // 🔥 if all questions completed
+    if (remainingQuestions.length === 0) {
+      req.session.askedQuestions = []; // reset
+      req.flash("success", "🎉 Interview completed!");
+      return res.redirect(`/interview/${topic}`);
+    }
+
+    // 🔹 pick random question
+    const randomQ =
+      remainingQuestions[Math.floor(Math.random() * remainingQuestions.length)];
+
+    // 🔹 store question id
+    req.session.askedQuestions.push(randomQ._id.toString());
 
     res.render("interview", {
       question: randomQ.question,
       id: randomQ._id,
+      topic: topic,
     });
   }),
 );
+
 app.post(
   "/interview",
   wrapAsync(async (req, res) => {
-    const { answer, questionId } = req.body;
+    const { answer, questionId, topic } = req.body;
 
-    // user login check
     if (!req.user) {
-      res.flash("error", "Please login first!");
+      req.flash("error", "Please login first!");
       return res.redirect("/login");
     }
 
@@ -174,8 +193,11 @@ app.post(
     });
 
     await newAnswer.save();
-    req.flash("success", "Answer submitted successfully ✅");
-    res.redirect("/interview/start");
+
+    req.flash("success", "Answer submitted ✅");
+
+    // 🔥 FIX: preserve topic
+    res.redirect(`/interview/start?topic=${topic}`);
   }),
 );
 
