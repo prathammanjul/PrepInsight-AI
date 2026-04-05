@@ -1,3 +1,5 @@
+require("dotenv").config(); // ✅ MUST BE FIRST
+
 const express = require("express");
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
@@ -9,9 +11,13 @@ const Question = require("./models/questionSchema");
 const Answer = require("./models/answer");
 const User = require("./models/user.js");
 
+const evaluateAnswer = require("./utils/ai"); // ✅ AI from utils
+const generateQuestion = require("./utils/generateQuestion");
+
 const { loginSchema, signupSchema } = require("./schema.js");
 const wrapAsync = require("./utils/wrapAsync");
 const ExpressError = require("./utils/ExpressError");
+
 // Packages
 const session = require("express-session");
 const passport = require("passport");
@@ -141,71 +147,62 @@ app.get(
   wrapAsync(async (req, res) => {
     const topic = req.query.topic || "backend";
 
-    // 🔹 get topic-based questions
-    const questions = await Question.find({ topic });
+    let newQuestion;
+    let attempts = 0;
 
-    // 🔹 initialize session storage
-    if (!req.session.askedQuestions) {
-      req.session.askedQuestions = [];
-    }
+    do {
+      newQuestion = await generateQuestion(topic);
+      attempts++;
+    } while (newQuestion === req.session.lastQuestion && attempts < 5);
 
-    // 🔹 filter already asked questions
-    const remainingQuestions = questions.filter(
-      (q) => !req.session.askedQuestions.includes(q._id.toString()),
-    );
-
-    // 🔥 if all questions completed
-    if (remainingQuestions.length === 0) {
-      req.session.askedQuestions = []; // reset
-      req.flash("success", "🎉 Interview completed!");
-      return res.redirect(`/interview/${topic}`);
-    }
-
-    // 🔹 pick random question
-    const randomQ =
-      remainingQuestions[Math.floor(Math.random() * remainingQuestions.length)];
-
-    // 🔹 store question id
-    req.session.askedQuestions.push(randomQ._id.toString());
+    // store last question
+    req.session.lastQuestion = newQuestion;
 
     res.render("interview", {
-      question: randomQ.question,
-      id: randomQ._id,
-      topic: topic,
+      question: newQuestion,
+      topic,
     });
   }),
 );
 
+// ------------------ SUBMIT ANSWER ------------------
+
 app.post(
   "/interview",
   wrapAsync(async (req, res) => {
-    const { answer, questionId, topic } = req.body;
+    const { answer, question, topic } = req.body;
 
     if (!req.user) {
       req.flash("error", "Please login first!");
       return res.redirect("/login");
     }
 
+    const feedback = await evaluateAnswer(question, answer);
+
     const newAnswer = new Answer({
       user: req.user._id,
-      question: questionId,
+      question,
       answer,
+      feedback,
     });
 
     await newAnswer.save();
 
-    req.flash("success", "Answer submitted ✅");
-
-    // 🔥 FIX: preserve topic
-    res.redirect(`/interview/start?topic=${topic}`);
+    res.render("result", {
+      answer,
+      feedback,
+      topic,
+    });
   }),
 );
+// ------------------ TOPIC PAGE ------------------
 
 app.get("/interview/:topic", (req, res) => {
   const { topic } = req.params;
-
   res.render("topic", { topic });
 });
+
+// ------------------ VIEW ANSWERS ------------------
 
 app.get(
   "/answers",
@@ -218,6 +215,7 @@ app.get(
     const answers = await Answer.find({ user: req.user._id })
       .populate("question")
       .populate("user");
+
     res.render("answer", { answers });
   }),
 );
@@ -231,8 +229,6 @@ app.use((req, res, next) => {
 // ------------------ ERROR HANDLER ------------------
 
 app.use((err, req, res, next) => {
-  // console.log(err);
-
   const { statusCode = 500, message = "Something went wrong!" } = err;
 
   if (res.headersSent) {

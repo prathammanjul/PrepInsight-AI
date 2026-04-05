@@ -5,12 +5,14 @@ const answerSchema = new mongoose.Schema({
     ref: "User",
   },
   question: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Question",
+    type: String,
   },
   answer: {
     type: String,
     require,
+  },
+  feedback: {
+    type: String,
   },
   createdAt: {
     type: Date,

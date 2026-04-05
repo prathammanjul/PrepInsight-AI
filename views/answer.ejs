@@ -8,16 +8,20 @@
   <% } %>
 
   <% answers.forEach(ans => { %>
-    <div class="card mb-3 shadow-sm p-3">
+    <div class="card p-3 mb-3 shadow-sm">
       
-      <h5 class="fw-bold">
 
-         <%= ans.question.question %> 
-      </h5>
+  
+  <h6 class="fw-bold text-primary"> Question❓</h6>
+  <p><%= ans.question %></p>
 
-      <p class="mt-2">
-        💬 <%= ans.answer %>
-      </p>
+  <h6 class="fw-bold text-dark">📝 Your Answer</h6>
+  <p><%= ans.answer %></p>
+
+  <h6 class="fw-bold text-success">🤖 AI Feedback</h6>
+  <pre><%= ans.feedback %></pre>
+
+
 
       <small class="text-muted">
         Submitted on: <%= ans.createdAt.toDateString() %>
