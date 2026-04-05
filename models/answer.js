@@ -14,6 +14,9 @@ const answerSchema = new mongoose.Schema({
   feedback: {
     type: String,
   },
+  score: {
+    type: Number,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

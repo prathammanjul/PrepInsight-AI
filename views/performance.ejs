@@ -1,0 +1,60 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 text-center">
+  <h2 class="mb-4">📊 Your Performance</h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm">
+        <h5>Total Questions</h5>
+        <h3><%= total %></h3>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm">
+        <h5>Average Score</h5>
+        <h3><%= avgScore %>/10</h3>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm">
+        <h5>Best Score</h5>
+        <h3><%= bestScore %>/10</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+<div class="container mt-5">
+  <h2 class="text-center mb-4">📊 My Answers</h2>
+
+  <% if (answers.length === 0) { %>
+    <h5 class="text-center text-muted">No answers yet</h5>
+  <% } %>
+
+  <% answers.forEach(ans => { %>
+    <div class="card p-3 mb-3 shadow-sm">
+      
+
+  
+  <h6 class="fw-bold text-primary"> Question❓</h6>
+  <p><%= ans.question %></p>
+
+  <h6 class="fw-bold text-dark">📝 Your Answer</h6>
+  <p><%= ans.answer %></p>
+
+  <h6 class="fw-bold text-success">🤖 AI Feedback</h6>
+  <pre><%= ans.feedback %></pre>
+
+
+
+      <small class="text-muted">
+        Submitted on: <%= ans.createdAt.toDateString() %>
+      </small>
+
+    </div>
+  <% }) %>
+</div>

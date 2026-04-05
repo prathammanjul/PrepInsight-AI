@@ -147,19 +147,22 @@ app.get(
   wrapAsync(async (req, res) => {
     const topic = req.query.topic || "backend";
 
-    let newQuestion;
+    if (!req.session.askedQuestions) {
+      req.session.askedQuestions = [];
+    }
+
+    let question;
     let attempts = 0;
 
     do {
-      newQuestion = await generateQuestion(topic);
+      question = await generateQuestion(topic, req.session.askedQuestions);
       attempts++;
-    } while (newQuestion === req.session.lastQuestion && attempts < 5);
+    } while (req.session.askedQuestions.includes(question) && attempts < 5);
 
-    // store last question
-    req.session.lastQuestion = newQuestion;
+    req.session.askedQuestions.push(question);
 
     res.render("interview", {
-      question: newQuestion,
+      question,
       topic,
     });
   }),
@@ -178,12 +181,15 @@ app.post(
     }
 
     const feedback = await evaluateAnswer(question, answer);
+    const scoreMatch = feedback.match(/Score: (\d+)/);
+    const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
 
     const newAnswer = new Answer({
       user: req.user._id,
       question,
       answer,
       feedback,
+      score,
     });
 
     await newAnswer.save();
@@ -204,8 +210,9 @@ app.get("/interview/:topic", (req, res) => {
 
 // ------------------ VIEW ANSWERS ------------------
 
+// ------------------ Performance route ------------------
 app.get(
-  "/answers",
+  "/performance",
   wrapAsync(async (req, res) => {
     if (!req.user) {
       req.flash("error", "Please login first!");
@@ -216,10 +223,24 @@ app.get(
       .populate("question")
       .populate("user");
 
-    res.render("answer", { answers });
+    const total = answers.length;
+
+    const totalScore = answers.reduce((sum, ans) => sum + (ans.score || 0), 0);
+
+    const avgScore = total ? (totalScore / total).toFixed(1) : 0;
+
+    const bestScore = answers.length
+      ? Math.max(...answers.map((a) => a.score || 0))
+      : 0;
+
+    res.render("performance", {
+      total,
+      avgScore,
+      bestScore,
+      answers,
+    });
   }),
 );
-
 // ------------------ 404 ------------------
 
 app.use((req, res, next) => {
