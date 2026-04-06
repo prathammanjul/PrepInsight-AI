@@ -8,6 +8,26 @@
     class="card shadow-lg p-5"
     style="max-width: 700px; width: 100%; border-radius: 18px"
   >
+    <div class="mb-4">
+      <!-- Timer Card -->
+      <div
+        class="card shadow-sm p-3 d-flex flex-row justify-content-between align-items-center"
+        style="border-radius: 12px"
+      >
+        <div>
+          <h6 class="mb-0 text-muted">⏱ Time Remaining</h6>
+          <small class="text-secondary">Answer within time</small>
+        </div>
+
+        <div
+          id="timerBox"
+          class="px-4 py-2 rounded-pill bg-light fw-bold"
+          style="font-size: 1.2rem"
+        >
+          120s
+        </div>
+      </div>
+    </div>
     <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h5 class="text-muted">Interview Question</h5>
@@ -49,10 +69,31 @@
 <script>
   const displayCount = document.getElementById("count");
   const inputField = document.getElementById("charCount");
-  inputField.addEventListener("input", function () {
-    const length = inputField.value.length;
 
-    displayCount.textContent = length;
-    // console.log(length);
+  inputField.addEventListener("input", function () {
+    displayCount.textContent = inputField.value.length;
   });
+
+  let timeLeft = 120;
+  const timerBox = document.getElementById("timerBox");
+
+  const countdown = setInterval(() => {
+    timeLeft--;
+
+    timerBox.textContent = timeLeft + "s";
+
+    // color change
+    if (timeLeft <= 10) {
+      timerBox.classList.remove("bg-light");
+      timerBox.classList.add("bg-danger", "text-white");
+    }
+
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      clearInterval(countdown);
+
+      alert("⏱ Time's up! Submitting your answer...");
+      document.querySelector("form").submit();
+    }
+  }, 1000);
 </script>

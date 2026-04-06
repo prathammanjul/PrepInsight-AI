@@ -30,7 +30,7 @@ Answer: ${answer}
       `,
     });
 
-    // safer extraction (handles edge cases)
+    // safeExtraction
     const output =
       response.output?.[0]?.content?.[0]?.text ||
       "AI feedback unavailable. Try again later.";
@@ -38,7 +38,7 @@ Answer: ${answer}
     return output;
   } catch (err) {
     console.log("OpenAI Error:", err.message);
-    return "AI feedback unavailable. Try again later.";
+    return null;
   }
 }
 

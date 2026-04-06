@@ -181,6 +181,14 @@ app.post(
     }
 
     const feedback = await evaluateAnswer(question, answer);
+    if (!feedback) {
+      req.flash(
+        "error",
+        "⚠ AI is currently unavailable. Please try again later.",
+      );
+      return res.redirect("/");
+    }
+
     const scoreMatch = feedback.match(/Score: (\d+)/);
     const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
 
