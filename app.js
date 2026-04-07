@@ -121,6 +121,7 @@ app.post(
     failureRedirect: "/login",
     failureFlash: true,
   }),
+
   (req, res) => {
     req.flash("success", "Welcome back 🎉");
     res.redirect("/");
