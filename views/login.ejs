@@ -1,19 +1,39 @@
 <% layout("/layouts/boilerplate") %>
+<link href="/css/login.css" rel="stylesheet" />
 
-<div class="container mt-5">
-  <h2 class="text-center">Login 🔐</h2>
-
-  <form action="/login" method="POST" class="mt-4">
-    <div class="mb-3">
-      <label>Username</label>
-      <input type="text" name="username" class="form-control" required />
+<div class="main-container">
+  <div class="auth-box">
+    <div class="auth-header">
+      <h4>Welcome back</h4>
+      <p>Sign in to continue your practice</p>
     </div>
 
-    <div class="mb-3">
-      <label>Password</label>
-      <input type="password" name="password" class="form-control" required />
+    <div class="details">
+      <form action="/login" method="POST">
+        <div>
+          <label>Username</label>
+          <input type="text" name="username" placeholder="john_john" required />
+        </div>
+
+        <div>
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="********"
+            required
+          />
+        </div>
+
+        <button class="auth-button">Login</button>
+      </form>
     </div>
 
-    <button class="btn btn-success w-100">Login</button>
-  </form>
+    <div class="redirect">
+      <p>
+        Don't have an account?
+        <a href="/signup">Sign up</a>
+      </p>
+    </div>
+  </div>
 </div>

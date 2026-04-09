@@ -147,6 +147,10 @@ app.get(
   "/interview/start",
   wrapAsync(async (req, res) => {
     const topic = req.query.topic || "backend";
+    if (!req.user) {
+      req.flash("error", "Please login first!");
+      return res.redirect("/login");
+    }
 
     if (!req.session.askedQuestions) {
       req.session.askedQuestions = [];
