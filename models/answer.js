@@ -1,3 +1,4 @@
+const { types } = require("joi");
 const mongoose = require("mongoose");
 const answerSchema = new mongoose.Schema({
   user: {
@@ -16,6 +17,9 @@ const answerSchema = new mongoose.Schema({
   },
   score: {
     type: Number,
+  },
+  topic: {
+    type: String,
   },
   createdAt: {
     type: Date,

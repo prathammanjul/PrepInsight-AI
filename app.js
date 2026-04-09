@@ -203,6 +203,7 @@ app.post(
       answer,
       feedback,
       score,
+      topic,
     });
 
     await newAnswer.save();
