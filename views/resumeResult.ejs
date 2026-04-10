@@ -1,0 +1,219 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+  body {
+    background: #020617;
+    color: white;
+  }
+
+  .container {
+    max-width: 1100px;
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  /* CARD */
+  .card-ui {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 20px;
+    transition: 0.3s;
+  }
+
+  .card-ui:hover {
+    border-color: rgba(56, 189, 248, 0.4);
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+  }
+
+  /* SCORE CARD */
+  .score-card {
+    text-align: center;
+    grid-column: span 2;
+  }
+
+  .score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    background: conic-gradient(
+      #38bdf8 <%= result.score * 3.6 %>deg,
+      rgba(255,255,255,0.1) 0deg
+    );
+  }
+
+  .score-circle span {
+    background: #020617;
+    border-radius: 50%;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* CHIP TAGS */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .chip.green {
+    background: rgba(34,197,94,0.2);
+    color: #4ade80;
+  }
+
+  .chip.red {
+    background: rgba(239,68,68,0.2);
+    color: #f87171;
+  }
+
+  .chip.blue {
+    background: rgba(56,189,248,0.2);
+    color: #38bdf8;
+  }
+
+  /* LIST */
+  ul {
+    padding-left: 18px;
+  }
+
+  li {
+    margin-bottom: 6px;
+    color: #cbd5f5;
+  }
+
+  h4 {
+    margin-bottom: 12px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+
+    .score-card {
+      grid-column: span 1;
+    }
+  }
+</style>
+
+<div class="container mt-5">
+
+  <div class="grid">
+
+    <!-- 🎯 SCORE -->
+    <div class="card-ui score-card">
+      <h2>🎯 Match Score</h2>
+
+      <div class="score-circle">
+        <span><%= result.score %>%</span>
+      </div>
+
+      <p>Keyword Match: <%= result.keywordMatchPercentage || 0 %>%</p>
+      <p>Experience Match: <%= result.experienceMatchPercentage || 0 %>%</p>
+    </div>
+
+    <!-- ✅ MATCHING SKILLS -->
+    <div class="card-ui">
+      <h4>✅ Matching Skills</h4>
+      <div class="chips">
+        <% result.matchingSkills?.forEach(s => { %>
+          <span class="chip green"><%= s %></span>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- ❌ MISSING SKILLS -->
+    <div class="card-ui">
+      <h4>❌ Missing Skills</h4>
+      <div class="chips">
+        <% result.missingSkills?.forEach(s => { %>
+          <span class="chip red"><%= s %></span>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- 💪 STRENGTHS -->
+    <div class="card-ui">
+      <h4>💪 Strengths</h4>
+      <ul>
+        <% result.strengths?.forEach(s => { %>
+          <li><%= s %></li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <!-- ⚠ WEAKNESSES -->
+    <div class="card-ui">
+      <h4>⚠ Weaknesses</h4>
+      <ul>
+        <% result.weaknesses?.forEach(s => { %>
+          <li><%= s %></li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <!-- 📈 ATS RISKS -->
+    <div class="card-ui">
+      <h4>⚠ ATS Risks</h4>
+      <ul>
+        <% result.atsRisks?.forEach(r => { %>
+          <li><%= r %></li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <!-- 🔧 IMPROVEMENTS -->
+    <div class="card-ui">
+      <h4>🔧 Improvements</h4>
+      <ul>
+        <% result.improvements?.forEach(s => { %>
+          <li><%= s %></li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <!-- 🔥 KEYWORDS -->
+    <div class="card-ui">
+      <h4>🔥 Recommended Keywords</h4>
+      <div class="chips">
+        <% result.recommendedKeywords?.forEach(k => { %>
+          <span class="chip blue"><%= k %></span>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- ✍ BULLETS -->
+    <div class="card-ui">
+      <h4>✍ Improve Resume Points</h4>
+      <ul>
+        <% result.recommendedBulletPoints?.forEach(b => { %>
+          <li><%= b %></li>
+        <% }) %>
+      </ul>
+    </div>
+
+  </div>
+
+</div>

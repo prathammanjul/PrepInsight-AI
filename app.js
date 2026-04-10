@@ -11,7 +11,12 @@ const Question = require("./models/questionSchema");
 const Answer = require("./models/answer");
 const User = require("./models/user.js");
 
-const evaluateAnswer = require("./utils/ai"); // ✅ AI from utils
+// Setup multer
+const upload = require("./utils/multer");
+//pdf parrser
+const extractTextFromPDF = require("./utils/pdfParser");
+const analyzeResume = require("./utils/resumeAnalyzer");
+const evaluateAnswer = require("./utils/ai"); // AI from utils
 const generateQuestion = require("./utils/generateQuestion");
 
 const { loginSchema, signupSchema } = require("./schema.js");
@@ -253,6 +258,47 @@ app.get(
       bestScore,
       answers,
     });
+  }),
+);
+
+// ------------------ Resume route ------------------
+app.get("/resume", (req, res) => {
+  res.render("resume");
+});
+
+app.post(
+  "/resume-analyze",
+  upload.single("resumeFile"),
+  wrapAsync(async (req, res) => {
+    const file = req.file;
+    const resumeText = req.body.resumeText;
+    const jobDescription = req.body.jobDescription;
+
+    let finalResume;
+    if (file) {
+      console.log("Cloudinary URL:", file.path);
+
+      // EXTRACT TEXT FROM PDF
+      finalResume = await extractTextFromPDF(file.path);
+    } else {
+      finalResume = resumeText;
+    }
+    if (!finalResume || !jobDescription) {
+      req.flash("error", "Resume or JD missing");
+      return res.redirect("/resume");
+    }
+    // console.log(finalResume);
+
+    // AI ANALYSIS
+    const result = await analyzeResume(finalResume, jobDescription);
+    if (!result) {
+      req.flash("error", "AI failed. Try again.");
+      return res.redirect("/resume");
+    }
+    // console.log(result);
+    res.render("resumeResult", { result });
+
+    // res.send("PDF parsed successfully");
   }),
 );
 // ------------------ 404 ------------------

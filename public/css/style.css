@@ -521,3 +521,33 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ================= PAGE ENTRY ================= */
+
+#page-content {
+  opacity: 0;
+  transform: translateY(1px);
+  animation: pageEnter 0.7s forwards;
+}
+
+@keyframes pageEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card,
+.stat-card,
+.topic-card {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: cardEnter 1s ease forwards;
+}
+
+@keyframes cardEnter {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
