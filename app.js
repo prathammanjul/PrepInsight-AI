@@ -71,29 +71,37 @@ app.use((req, res, next) => {
   next();
 });
 
+const {
+  validateLogin,
+  validateSignup,
+  saveRedirectUrl,
+  isLoggedIn,
+  validateResume,
+  uploadResume,
+} = require("./middlewares");
 // ------------------ ROUTES ------------------
 
 // Home
-app.get("/", (req, res) => {
-  res.render("index");
-});
+app.get(
+  "/",
+  wrapAsync(async (req, res) => {
+    res.render("index");
+  }),
+);
 
 // ------------------ SIGNUP ------------------
 
-app.get("/signup", (req, res) => {
-  res.render("signup");
-});
+app.get(
+  "/signup",
+  wrapAsync(async (req, res) => {
+    res.render("signup");
+  }),
+);
 
 app.post(
   "/signup",
+  validateSignup,
   wrapAsync(async (req, res) => {
-    const { error } = signupSchema.validate(req.body);
-
-    if (error) {
-      req.flash("error", error.details[0].message);
-      return res.redirect("/signup");
-    }
-
     const { username, email, password } = req.body;
 
     const newUser = new User({ username, email });
@@ -112,24 +120,21 @@ app.get("/login", (req, res) => {
 
 app.post(
   "/login",
-  (req, res, next) => {
-    const { error } = loginSchema.validate(req.body);
 
-    if (error) {
-      req.flash("error", error.details[0].message);
-      return res.redirect("/login");
-    }
+  validateLogin,
 
-    next();
-  },
   passport.authenticate("local", {
     failureRedirect: "/login",
     failureFlash: true,
   }),
 
+  saveRedirectUrl,
+
   (req, res) => {
     req.flash("success", "Welcome back 🎉");
-    res.redirect("/");
+
+    const redirectUrl = res.locals.redirectUrl || "/";
+    res.redirect(redirectUrl);
   },
 );
 
@@ -150,12 +155,10 @@ app.get("/interview", (req, res) => {
 
 app.get(
   "/interview/start",
+  isLoggedIn,
+
   wrapAsync(async (req, res) => {
     const topic = req.query.topic || "backend";
-    if (!req.user) {
-      req.flash("error", "Please login first!");
-      return res.redirect("/login");
-    }
 
     if (!req.session.askedQuestions) {
       req.session.askedQuestions = [];
@@ -182,13 +185,9 @@ app.get(
 
 app.post(
   "/interview",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const { answer, question, topic } = req.body;
-
-    if (!req.user) {
-      req.flash("error", "Please login first!");
-      return res.redirect("/login");
-    }
 
     const feedback = await evaluateAnswer(question, answer);
     if (!feedback) {
@@ -222,22 +221,22 @@ app.post(
 );
 // ------------------ TOPIC PAGE ------------------
 
-app.get("/interview/:topic", (req, res) => {
-  const { topic } = req.params;
-  res.render("topic", { topic });
-});
+app.get(
+  "/interview/:topic",
+  isLoggedIn,
+  wrapAsync(async (req, res) => {
+    const { topic } = req.params;
+    res.render("topic", { topic });
+  }),
+);
 
 // ------------------ VIEW ANSWERS ------------------
 
 // ------------------ Performance route ------------------
 app.get(
   "/performance",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
-    if (!req.user) {
-      req.flash("error", "Please login first!");
-      return res.redirect("/login");
-    }
-
     const answers = await Answer.find({ user: req.user._id })
       .populate("question")
       .populate("user");
@@ -262,13 +261,21 @@ app.get(
 );
 
 // ------------------ Resume route ------------------
-app.get("/resume", (req, res) => {
-  res.render("resume");
-});
+app.get(
+  "/resume",
+  isLoggedIn,
+  wrapAsync(async (req, res) => {
+    res.render("resume");
+  }),
+);
 
 app.post(
   "/resume-analyze",
+
   upload.single("resumeFile"),
+  isLoggedIn,
+  validateResume,
+  uploadResume,
   wrapAsync(async (req, res) => {
     const file = req.file;
     const resumeText = req.body.resumeText;
@@ -296,9 +303,26 @@ app.post(
       return res.redirect("/resume");
     }
     // console.log(result);
+    // console.log("RESUME TEXT LENGTH:", finalResume?.length);
+    // console.log("JD LENGTH:", jobDescription?.length);
     res.render("resumeResult", { result });
 
     // res.send("PDF parsed successfully");
+  }),
+);
+
+// ------------------ PDF DOwnloader route ------------------
+
+const generatePDF = require("./utils/generateReport");
+const { wrap } = require("pdfkit");
+const { any } = require("joi");
+
+app.post(
+  "/download-report",
+  wrapAsync(async (req, res) => {
+    const result = JSON.parse(req.body.result);
+
+    generatePDF(res, result);
   }),
 );
 // ------------------ 404 ------------------

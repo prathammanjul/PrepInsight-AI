@@ -10,3 +10,11 @@ module.exports.loginSchema = Joi.object({
   username: Joi.string().required(),
   password: Joi.string().required(),
 });
+
+module.exports.resumeSchema = Joi.object({
+  resumeText: Joi.string().allow("").optional(),
+
+  jobDescription: Joi.string().min(20).required().messages({
+    "string.empty": "Job description is required",
+  }),
+});

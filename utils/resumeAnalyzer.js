@@ -14,46 +14,53 @@ You are an advanced ATS (Applicant Tracking System) and technical recruiter.
 Analyze the resume against the given job description.
 
 Follow these rules strictly:
-- Be highly critical and realistic (like a real ATS + recruiter)
-- Consider keywords, skills, projects, experience, and formatting
-- Evaluate both ATS parsing and recruiter impression
-- Do NOT assume missing information
-- Penalize missing keywords and irrelevant content
+- Be highly critical and realistic
+- Focus on keywords, skills, projects, and experience
+- Penalize missing keywords
+- Keep output SHORT and UI-friendly
 
-Return STRICT JSON ONLY (no explanation outside JSON):
+Return STRICT JSON ONLY:
 
 {
-  "score": number (0-100),
-  "keywordMatchPercentage": number (0-100),
-  "experienceMatchPercentage": number (0-100),
+  "score": number,
+  "keywordMatchPercentage": number,
+  "experienceMatchPercentage": number,
   "educationMatch": "Good" | "Average" | "Weak",
-  "matchingSkills": ["skill1", "skill2"],
-  "missingSkills": ["skill1", "skill2"],
-  "importantKeywordsMissing": ["keyword1", "keyword2"],
-  "strengths": ["point1", "point2"],
-  "weaknesses": ["point1", "point2"],
-  "improvements": ["point1", "point2"],
-  "atsRisks": ["issue1", "issue2"],
-  "atsTips": ["tip1", "tip2"],
-  "recommendedBulletPoints": ["bullet1", "bullet2"],
-  "recommendedKeywords": ["keyword1", "keyword2"]
+  "matchingSkills": [],
+  "missingSkills": [],
+  "importantKeywordsMissing": [],
+  "strengths": [],
+  "weaknesses": [],
+  "improvements": [],
+  "atsRisks": [],
+  "atsTips": [],
+  "recommendedBulletPoints": [],
+  "recommendedKeywords": []
 }
-
-Also suggest exact bullet points or keywords I should add to improve the score above 90+.
 
 Resume:
 ${resumeText}
 
 Job Description:
 ${jobDescription}
-  `,
+`,
     });
 
-    const output = response.output?.[0]?.content?.[0]?.text || "{}";
+    const output = response.output?.[0]?.content?.[0]?.text || "";
+
+    console.log("RAW AI OUTPUT:\n", output);
+
+    if (!output) return null;
+
+    const cleaned = output
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
 
     try {
-      return JSON.parse(output);
-    } catch {
+      return JSON.parse(cleaned);
+    } catch (err) {
+      console.log("JSON PARSE ERROR:", err.message);
       return null;
     }
   } catch (err) {

@@ -1,5 +1,6 @@
 const axios = require("axios");
 const pdfParse = require("pdf-parse");
+console.warn = () => {};
 
 async function extractTextFromPDF(url) {
   try {
@@ -20,11 +21,11 @@ async function extractTextFromPDF(url) {
       .trim();
 
     // DEBUG LOG
-    console.log("TEXT LENGTH:", cleanedText.length);
+    // console.log("TEXT LENGTH:", cleanedText.length);
 
     return cleanedText;
   } catch (err) {
-    console.log("PDF Parsing Error:", err.message);
+    // console.log("PDF Parsing Error:", err.message);
     return null;
   }
 }
