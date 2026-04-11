@@ -46,7 +46,7 @@ mongoose
 // ------------------ SESSION ------------------
 app.use(
   session({
-    secret: "mysecretkey",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
   }),
@@ -71,243 +71,22 @@ app.use((req, res, next) => {
   next();
 });
 
-const {
-  validateLogin,
-  validateSignup,
-  saveRedirectUrl,
-  isLoggedIn,
-  validateResume,
-  uploadResume,
-} = require("./middlewares");
 // ------------------ ROUTES ------------------
+const authRoutes = require("./routes/authRoutes");
+const interviewRoutes = require("./routes/interviewRoutes");
+const performanceRoutes = require("./routes/performanceRoutes");
+const resumeRoutes = require("./routes/resumeRoutes");
+
+app.use("/", authRoutes);
+app.use("/", interviewRoutes);
+app.use("/", performanceRoutes);
+app.use("/", resumeRoutes);
 
 // Home
 app.get(
   "/",
   wrapAsync(async (req, res) => {
     res.render("index");
-  }),
-);
-
-// ------------------ SIGNUP ------------------
-
-app.get(
-  "/signup",
-  wrapAsync(async (req, res) => {
-    res.render("signup");
-  }),
-);
-
-app.post(
-  "/signup",
-  validateSignup,
-  wrapAsync(async (req, res) => {
-    const { username, email, password } = req.body;
-
-    const newUser = new User({ username, email });
-    await User.register(newUser, password);
-
-    req.flash("success", "Welcome! Account created successfully 🎉");
-    res.redirect("/login");
-  }),
-);
-
-// ------------------ LOGIN ------------------
-
-app.get("/login", (req, res) => {
-  res.render("login");
-});
-
-app.post(
-  "/login",
-
-  validateLogin,
-
-  passport.authenticate("local", {
-    failureRedirect: "/login",
-    failureFlash: true,
-  }),
-
-  saveRedirectUrl,
-
-  (req, res) => {
-    req.flash("success", "Welcome back 🎉");
-
-    const redirectUrl = res.locals.redirectUrl || "/";
-    res.redirect(redirectUrl);
-  },
-);
-
-// ------------------ LOGOUT ------------------
-
-app.get("/logout", (req, res) => {
-  req.logout(() => {
-    req.flash("success", "Logged out successfully 👋");
-    res.redirect("/");
-  });
-});
-
-// ------------------ INTERVIEW ------------------
-
-app.get("/interview", (req, res) => {
-  res.render("interviewHome");
-});
-
-app.get(
-  "/interview/start",
-  isLoggedIn,
-
-  wrapAsync(async (req, res) => {
-    const topic = req.query.topic || "backend";
-
-    if (!req.session.askedQuestions) {
-      req.session.askedQuestions = [];
-    }
-
-    let question;
-    let attempts = 0;
-
-    do {
-      question = await generateQuestion(topic, req.session.askedQuestions);
-      attempts++;
-    } while (req.session.askedQuestions.includes(question) && attempts < 5);
-
-    req.session.askedQuestions.push(question);
-
-    res.render("interview", {
-      question,
-      topic,
-    });
-  }),
-);
-
-// ------------------ SUBMIT ANSWER ------------------
-
-app.post(
-  "/interview",
-  isLoggedIn,
-  wrapAsync(async (req, res) => {
-    const { answer, question, topic } = req.body;
-
-    const feedback = await evaluateAnswer(question, answer);
-    if (!feedback) {
-      req.flash(
-        "error",
-        "⚠ AI is currently unavailable. Please try again later.",
-      );
-      return res.redirect("/");
-    }
-
-    const scoreMatch = feedback.match(/Score: (\d+)/);
-    const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
-
-    const newAnswer = new Answer({
-      user: req.user._id,
-      question,
-      answer,
-      feedback,
-      score,
-      topic,
-    });
-
-    await newAnswer.save();
-
-    res.render("result", {
-      answer,
-      feedback,
-      topic,
-    });
-  }),
-);
-// ------------------ TOPIC PAGE ------------------
-
-app.get(
-  "/interview/:topic",
-  isLoggedIn,
-  wrapAsync(async (req, res) => {
-    const { topic } = req.params;
-    res.render("topic", { topic });
-  }),
-);
-
-// ------------------ VIEW ANSWERS ------------------
-
-// ------------------ Performance route ------------------
-app.get(
-  "/performance",
-  isLoggedIn,
-  wrapAsync(async (req, res) => {
-    const answers = await Answer.find({ user: req.user._id })
-      .populate("question")
-      .populate("user");
-
-    const total = answers.length;
-
-    const totalScore = answers.reduce((sum, ans) => sum + (ans.score || 0), 0);
-
-    const avgScore = total ? (totalScore / total).toFixed(1) : 0;
-
-    const bestScore = answers.length
-      ? Math.max(...answers.map((a) => a.score || 0))
-      : 0;
-
-    res.render("performance", {
-      total,
-      avgScore,
-      bestScore,
-      answers,
-    });
-  }),
-);
-
-// ------------------ Resume route ------------------
-app.get(
-  "/resume",
-  isLoggedIn,
-  wrapAsync(async (req, res) => {
-    res.render("resume");
-  }),
-);
-
-app.post(
-  "/resume-analyze",
-
-  upload.single("resumeFile"),
-  isLoggedIn,
-  validateResume,
-  uploadResume,
-  wrapAsync(async (req, res) => {
-    const file = req.file;
-    const resumeText = req.body.resumeText;
-    const jobDescription = req.body.jobDescription;
-
-    let finalResume;
-    if (file) {
-      console.log("Cloudinary URL:", file.path);
-
-      // EXTRACT TEXT FROM PDF
-      finalResume = await extractTextFromPDF(file.path);
-    } else {
-      finalResume = resumeText;
-    }
-    if (!finalResume || !jobDescription) {
-      req.flash("error", "Resume or JD missing");
-      return res.redirect("/resume");
-    }
-    // console.log(finalResume);
-
-    // AI ANALYSIS
-    const result = await analyzeResume(finalResume, jobDescription);
-    if (!result) {
-      req.flash("error", "AI failed. Try again.");
-      return res.redirect("/resume");
-    }
-    // console.log(result);
-    // console.log("RESUME TEXT LENGTH:", finalResume?.length);
-    // console.log("JD LENGTH:", jobDescription?.length);
-    res.render("resumeResult", { result });
-
-    // res.send("PDF parsed successfully");
   }),
 );
 
