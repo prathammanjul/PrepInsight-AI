@@ -60,6 +60,7 @@ module.exports.uploadResume = (req, res, next) => {
       } else {
         req.flash("error", "File upload error");
       }
+      console.log("UPLOAD ERROR:", err);
       return res.redirect("/resume");
     }
     next();
