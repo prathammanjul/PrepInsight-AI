@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const wrapAsync = require("../utils/wrapAsync");
 
 const {
   renderInterviewHome,
@@ -9,11 +8,12 @@ const {
 } = require("../controllers/interviewController");
 
 const { isLoggedIn } = require("../middlewares");
+const wrapAsync = require("../utils/wrapAsync");
 
 router.get("/interview", renderInterviewHome);
 
-router.get("/interview/start", isLoggedIn, startInterview);
+router.get("/interview/start", isLoggedIn, wrapAsync(startInterview));
 
-router.post("/interview", isLoggedIn, submitAnswer);
+router.post("/interview", isLoggedIn, wrapAsync(submitAnswer));
 
 module.exports = router;

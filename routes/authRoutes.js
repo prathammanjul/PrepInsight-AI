@@ -17,9 +17,11 @@ const {
   saveRedirectUrl,
 } = require("../middlewares");
 
+const wrapAsync = require("../utils/wrapAsync");
+
 router.get("/signup", renderSignup);
 
-router.post("/signup", validateSignup, signup);
+router.post("/signup", validateSignup, wrapAsync(signup));
 
 router.get("/login", renderLogin);
 
@@ -31,7 +33,7 @@ router.post(
     failureFlash: true,
   }),
   saveRedirectUrl,
-  login,
+  wrapAsync(login),
 );
 
 router.get("/logout", logout);

@@ -1,3 +1,5 @@
+const User = require("../models/user");
+
 module.exports.renderSignup = (req, res) => {
   res.render("signup");
 };
@@ -16,7 +18,7 @@ module.exports.renderLogin = (req, res) => {
   res.render("login");
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = async (req, res) => {
   req.flash("success", "Welcome back 🎉");
 
   const redirectUrl = res.locals.redirectUrl || "/";

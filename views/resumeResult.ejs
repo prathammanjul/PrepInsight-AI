@@ -122,7 +122,7 @@
 
   <div class="grid">
 
-    <!-- 🎯 SCORE -->
+    <!--  SCORE -->
     <div class="card-ui score-card">
       <h2>🎯 Match Score</h2>
 
@@ -134,7 +134,7 @@
       <p>Experience Match: <%= result.experienceMatchPercentage || 0 %>%</p>
     </div>
 
-    <!-- ✅ MATCHING SKILLS -->
+    <!--  MATCHING SKILLS -->
     <div class="card-ui">
       <h4>✅ Matching Skills</h4>
       <div class="chips">
@@ -144,7 +144,7 @@
       </div>
     </div>
 
-    <!-- ❌ MISSING SKILLS -->
+    <!--  MISSING SKILLS -->
     <div class="card-ui">
       <h4>❌ Missing Skills</h4>
       <div class="chips">
@@ -154,7 +154,7 @@
       </div>
     </div>
 
-    <!-- 💪 STRENGTHS -->
+    <!--  STRENGTHS -->
     <div class="card-ui">
       <h4>💪 Strengths</h4>
       <ul>
@@ -164,7 +164,7 @@
       </ul>
     </div>
 
-    <!-- ⚠ WEAKNESSES -->
+    <!--  WEAKNESSES -->
     <div class="card-ui">
       <h4>⚠ Weaknesses</h4>
       <ul>
@@ -174,7 +174,7 @@
       </ul>
     </div>
 
-    <!-- 📈 ATS RISKS -->
+    <!--  ATS RISKS -->
     <div class="card-ui">
       <h4>⚠ ATS Risks</h4>
       <ul>
@@ -184,7 +184,7 @@
       </ul>
     </div>
 
-    <!-- 🔧 IMPROVEMENTS -->
+    <!--  IMPROVEMENTS -->
     <div class="card-ui">
       <h4>🔧 Improvements</h4>
       <ul>
@@ -194,9 +194,9 @@
       </ul>
     </div>
 
-    <!-- 🔥 KEYWORDS -->
+    <!--  KEYWORDS -->
     <div class="card-ui">
-      <h4>🔥 Recommended Keywords</h4>
+      <h4> Recommended Keywords</h4>
       <div class="chips">
         <% result.recommendedKeywords?.forEach(k => { %>
           <span class="chip blue"><%= k %></span>
@@ -215,6 +215,7 @@
     </div>
 
   </div>
+
   <form action="/download-report" method="POST" class="text-center mt-4">
   <input type="hidden" name="result" value='<%= JSON.stringify(result) %>' />
   

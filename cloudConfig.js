@@ -20,4 +20,4 @@ const storage = new CloudinaryStorage({
   },
 });
 
-module.exports = cloudinary; //
+module.exports = cloudinary;

@@ -20,7 +20,6 @@ async function extractTextFromPDF(url) {
       .replace(/\s+/g, " ")
       .trim();
 
-    // DEBUG LOG
     // console.log("TEXT LENGTH:", cleanedText.length);
 
     return cleanedText;

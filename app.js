@@ -1,4 +1,8 @@
 require("dotenv").config();
+// validate required env vars
+if (!process.env.OPENAI_API_KEY) {
+  throw new Error("OPENAI_API_KEY is required — check your .env file");
+}
 
 const express = require("express");
 const mongoose = require("mongoose");

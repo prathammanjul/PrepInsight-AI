@@ -49,7 +49,6 @@ module.exports.validateResume = (req, res, next) => {
 
   next();
 };
-
 module.exports.uploadResume = (req, res, next) => {
   upload.single("resumeFile")(req, res, function (err) {
     if (err) {
@@ -60,9 +59,13 @@ module.exports.uploadResume = (req, res, next) => {
       } else {
         req.flash("error", "File upload error");
       }
-      console.log("UPLOAD ERROR:", err);
-      return res.redirect("/resume");
+
+      return res.redirect("/resume"); //
     }
-    next();
+
+    //  only call next if no response sent
+    if (!res.headersSent) {
+      return next();
+    }
   });
 };

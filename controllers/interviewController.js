@@ -36,7 +36,7 @@ module.exports.submitAnswer = async (req, res) => {
     return res.redirect("/");
   }
 
-  const scoreMatch = feedback.match(/Score: (\d+)/);
+  const scoreMatch = feedback.match(/Score: (\d+)/i);
   const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
 
   await Answer.create({

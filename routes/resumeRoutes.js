@@ -16,8 +16,8 @@ router.get("/resume", isLoggedIn, renderResumePage);
 // POST → Analyze resume
 router.post(
   "/resume-analyze",
-  uploadResume,
   isLoggedIn,
+  uploadResume,
   validateResume,
   wrapAsync(analyzeResumeHandler),
 );

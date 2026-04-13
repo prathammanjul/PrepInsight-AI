@@ -36,6 +36,6 @@ module.exports.analyzeResumeHandler = async (req, res) => {
   //  RENDER RESULT
   res.render("resumeResult", {
     result,
-    resumeText: finalResume, // 🔥 important for highlight feature
+    resumeText: finalResume,
   });
 };

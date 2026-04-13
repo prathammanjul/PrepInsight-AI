@@ -30,7 +30,6 @@ Answer: ${answer}
       `,
     });
 
-    // safeExtraction
     const output =
       response.output?.[0]?.content?.[0]?.text ||
       "AI feedback unavailable. Try again later.";

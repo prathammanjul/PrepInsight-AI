@@ -1,9 +1,8 @@
 const Answer = require("../models/answer");
 
 module.exports.renderPerformance = async (req, res) => {
-  const answers = await Answer.find({ user: req.user._id })
-    .populate("question")
-    .populate("user");
+  const answers = await Answer.find({ user: req.user._id }).populate("user");
+  // .populate("question")
 
   const total = answers.length;
 
