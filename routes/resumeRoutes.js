@@ -6,7 +6,12 @@ const {
   analyzeResumeHandler,
 } = require("../controllers/resumeController");
 
-const { isLoggedIn, validateResume, uploadResume } = require("../middlewares");
+const {
+  isLoggedIn,
+  validateResume,
+  uploadResume,
+  checkResumeLimit,
+} = require("../middlewares");
 
 const wrapAsync = require("../utils/wrapAsync");
 
@@ -19,6 +24,7 @@ router.post(
   isLoggedIn,
   uploadResume,
   validateResume,
+  checkResumeLimit,
   wrapAsync(analyzeResumeHandler),
 );
 

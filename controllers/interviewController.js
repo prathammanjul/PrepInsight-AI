@@ -1,6 +1,7 @@
 const generateQuestion = require("../utils/generateQuestion");
 const evaluateAnswer = require("../utils/ai");
 const Answer = require("../models/answer");
+const User = require("../models/user");
 
 module.exports.renderInterviewHome = (req, res) => {
   res.render("interviewHome");
@@ -21,9 +22,19 @@ module.exports.startInterview = async (req, res) => {
     attempts++;
   } while (req.session.askedQuestions.includes(question) && attempts < 5);
 
+  const user = await User.findById(req.user._id);
+
+  await User.findByIdAndUpdate(req.user._id, {
+    $inc: { interviewQuestions: 1 },
+  });
+
   req.session.askedQuestions.push(question);
 
-  res.render("interview", { question, topic });
+  res.render("interview", {
+    question,
+    topic,
+    remaining: 5 - user.interviewQuestions,
+  });
 };
 
 module.exports.submitAnswer = async (req, res) => {

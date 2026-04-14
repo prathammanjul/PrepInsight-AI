@@ -1,5 +1,6 @@
 const extractTextFromPDF = require("../utils/pdfParser");
 const analyzeResume = require("../utils/resumeAnalyzer");
+const User = require("../models/user");
 
 module.exports.renderResumePage = (req, res) => {
   res.render("resume");
@@ -32,6 +33,7 @@ module.exports.analyzeResumeHandler = async (req, res) => {
     req.flash("error", "AI failed. Try again.");
     return res.redirect("/resume");
   }
+  await User.findByIdAndUpdate(req.user._id, { $inc: { resumeChecks: 1 } });
 
   //  RENDER RESULT
   res.render("resumeResult", {

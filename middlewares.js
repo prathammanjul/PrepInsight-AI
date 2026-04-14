@@ -1,5 +1,5 @@
-const { loginSchema } = require("./schema");
-const { resumeSchema } = require("./schema");
+const { loginSchema, signupSchema, resumeSchema } = require("./schema");
+const User = require("./models/user");
 const upload = require("./utils/multer");
 
 module.exports.isLoggedIn = (req, res, next) => {
@@ -68,4 +68,23 @@ module.exports.uploadResume = (req, res, next) => {
       return next();
     }
   });
+};
+
+module.exports.checkResumeLimit = async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  if (user.resumeChecks >= 2) {
+    req.flash("error", "You have used your 2 free resume checks.");
+    return res.redirect("/resume");
+  }
+  next();
+};
+module.exports.checkInterviewLimit = async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  if (user.interviewQuestions >= 5) {
+    req.flash("error", "You have used your 5 free interview questions.");
+    return res.redirect("/interview");
+  }
+  next();
 };

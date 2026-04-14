@@ -7,12 +7,17 @@ const {
   submitAnswer,
 } = require("../controllers/interviewController");
 
-const { isLoggedIn } = require("../middlewares");
+const { isLoggedIn, checkInterviewLimit } = require("../middlewares");
 const wrapAsync = require("../utils/wrapAsync");
 
 router.get("/interview", renderInterviewHome);
 
-router.get("/interview/start", isLoggedIn, wrapAsync(startInterview));
+router.get(
+  "/interview/start",
+  isLoggedIn,
+  checkInterviewLimit,
+  wrapAsync(startInterview),
+);
 
 router.post("/interview", isLoggedIn, wrapAsync(submitAnswer));
 
