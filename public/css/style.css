@@ -2,6 +2,12 @@
 body {
   margin: 0% !important;
   padding: 0% !important;
+  display: flex;
+  flex-direction: column;
+}
+html,
+body {
+  height: 100%;
 }
 
 /* ================= HERO ================= */
@@ -246,6 +252,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 
   padding: 20px 40px;
   background: #020617;
@@ -266,6 +273,14 @@ body {
 
 .footer-right {
   text-align: right;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
 }
 
 /* ================= TOAST ================= */
@@ -444,6 +459,7 @@ body {
 }
 
 #page-content {
+  flex: 1;
   transform: translateY(0);
   transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
   animation: settle 0.25s ease;
