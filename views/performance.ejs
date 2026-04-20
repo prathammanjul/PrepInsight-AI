@@ -9,7 +9,7 @@
 
   <!-- HEADER -->
   <div class="performance-header">
-    <h2>Your Performance</h2>
+    <h2>Your <span>Performance</span></h2>
     <p>Track your interview progress and improvement</p>
   </div>
 
@@ -38,44 +38,87 @@
 
   <!-- ANSWERS -->
   <div class="answers-section">
-    <h3>My Answers</h3>
+  <h3>My Performance</h3>
 
-    <% if (answers.length === 0) { %>
-      <p class="empty">No answers yet</p>
-    <% } %>
+  <% if (answers.length === 0) { %>
+    <p class="empty">No answers yet</p>
+  <% } %>
 
-    <% answers.forEach(ans => { %>
-      <div class="answer-card">
+  <% answers.forEach(ans => { %>
+    <div class="answer-card">
 
-         <p class="aiTag">
-          <%= ans.topic %>
-         </p>
-        <!-- QUESTION -->
-        <div class="block">
-          <h6> Question ❓</h6>
-          <p><%= ans.question %></p>
-        </div>
+  <!-- CLICKABLE HEADER -->
+  <div class="card-header" onclick="toggleCard(this)">
+    <div>
+      <span class="topic-tag"><%= ans.topic %></span>
+      <h4 class="question"><%= ans.question %></h4>
+    </div>
 
-        <!-- ANSWER -->
-        <div class="block">
-          <h6>📝 Your Answer</h6>
-          <p><%= ans.answer %></p>
-        </div>
+    <div class="right">
+      <span class="score"><%= ans.score %>%</span>
+      <span class="arrow">⌄</span>
+    </div>
+  </div>
 
-        <!-- FEEDBACK -->
-        <div class="block">
-          <h6>🤖 AI Feedback</h6>
-          <pre><%= ans.feedback %></pre>
-        </div>
+  <!-- COLLAPSIBLE CONTENT -->
+  <div class="card-content">
 
-        <!-- DATE -->
-        <small class="date">
-          <%= ans.createdAt.toDateString() %>
-        </small>
+    <!-- PROGRESS -->
+    <div class="progress-bar">
+      <div class="progress-fill" style="width:<%= ans.score %>%"></div>
+    </div>
 
-      </div>
-    <% }) %>
+    <!-- ANSWER -->
+    <div class="section">
+      <h6>📝 Your Answer</h6>
+      <p><%= ans.answer %></p>
+    </div>
+
+    <!-- FEEDBACK -->
+   <div class="section">
+
+  <div class="feedback-box green">
+    <strong>✔ Strength</strong>
+    <p><%= ans.feedback?.strength  %></p>
+  </div>
+
+  <div class="feedback-box orange">
+    <strong>⚠ Improve</strong>
+    <p><%= ans.feedback?.improvement %></p>
+  </div>
+
+  <div class="feedback-box blue">
+    <strong>⭐ Perfect Answer</strong>
+    <p><%= ans.feedback?.perfectAnswer %></p>
+  </div>
+
+</div>
+
+    <small class="date"><%= ans.createdAt.toDateString() %></small>
 
   </div>
 
 </div>
+
+    </div>
+  <% }) %>
+</div>
+
+</div>
+
+
+
+
+
+<script>
+  function toggleCard(el) {
+    const card = el.parentElement;
+
+
+    document.querySelectorAll(".answer-card").forEach(c => {
+      if (c !== card) c.classList.remove("active");
+    });
+
+    card.classList.toggle("active");
+  }
+</script>
