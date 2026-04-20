@@ -12,7 +12,9 @@ const answerSchema = new mongoose.Schema({
     required: true,
   },
   feedback: {
-    type: String,
+    strength: String,
+    improvement: String,
+    perfectAnswer: String,
   },
   score: {
     type: Number,

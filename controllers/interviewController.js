@@ -47,8 +47,7 @@ module.exports.submitAnswer = async (req, res) => {
     return res.redirect("/");
   }
 
-  const scoreMatch = feedback.match(/Score: (\d+)/i);
-  const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+  const score = feedback.score || 0;
 
   await Answer.create({
     user: req.user._id,
@@ -59,5 +58,10 @@ module.exports.submitAnswer = async (req, res) => {
     topic,
   });
 
-  res.render("result", { answer, feedback, topic });
+  res.render("result", {
+    answer,
+    feedback,
+    score,
+    topic,
+  });
 };
