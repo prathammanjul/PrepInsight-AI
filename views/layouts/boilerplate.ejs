@@ -24,8 +24,7 @@
 
   <body>
 
-    <!-- NAVBAR -->
-    <%- include("../includes/navbar.ejs") %>
+   
 
     <!-- TOASTS -->
     <% if (success && success.length) { %>
@@ -46,11 +45,16 @@
       </div>
     <% } %>
 
+    <%- include("../includes/navbar.ejs") %>
     <!-- MAIN CONTENT -->
     <main id="page-content">
+       <!-- NAVBAR -->
+
       <%- body %>
+
     </main>
     
+    <%- include("../includes/footer.ejs") %>
     <!-- SCRIPTS -->
     <script>
       document.querySelectorAll(".toast-success, .toast-error").forEach((toast) => {
@@ -65,7 +69,7 @@
       </script>
 
 
-<%- include("../includes/footer.ejs") %>
+
 <script src="/js/script.js"></script>
 
 </body>

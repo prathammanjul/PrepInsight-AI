@@ -16,6 +16,7 @@ router.get(
   "/interview/start",
   isLoggedIn,
   checkInterviewLimit,
+
   wrapAsync(startInterview),
 );
 

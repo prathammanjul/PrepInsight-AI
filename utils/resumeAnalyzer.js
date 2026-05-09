@@ -46,9 +46,9 @@ ${jobDescription}
 `,
     });
 
-    const output = response.output?.[0]?.content?.[0]?.text || "";
+    const output = response.output?.[0]?.content?.[0]?.text || "{}";
 
-    console.log("RAW AI OUTPUT:\n", output);
+    // console.log("RAW AI OUTPUT:\n", output);
 
     if (!output) return null;
 
@@ -60,11 +60,11 @@ ${jobDescription}
     try {
       return JSON.parse(cleaned);
     } catch (err) {
-      console.log("JSON PARSE ERROR:", err.message);
+      // console.log("JSON PARSE ERROR:", err.message);
       return null;
     }
   } catch (err) {
-    console.log("AI Resume Error:", err.message);
+    // console.log("AI Resume Error:", err.message);
     return null;
   }
 }

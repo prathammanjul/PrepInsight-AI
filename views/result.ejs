@@ -1,6 +1,6 @@
 <% layout("/layouts/boilerplate") %>
 <link href="/css/result.css" rel="stylesheet" />
-<style></style>
+
 <div class="result-wrapper">
   <!-- HEADER -->
   <div class="result-header">
@@ -10,14 +10,11 @@
 
   <!-- SCORE CARD -->
   <div class="score-card">
-    <h1 class="score"><%= feedback.match(/Score: (\d+)/)?.[1] || "0" %></h1>
-    <p>out of 10</p>
+    <h1><%= score %></h1>
+    <p>out of 100</p>
 
     <div class="score-bar">
-      <div
-        class="score-fill"
-        style="width: <%= (feedback.match(/Score: (\d+)/) ?.[1] || 0) * 10 %>%"
-      ></div>
+      <div class="score-fill" style="width: <%= score %>%"></div>
     </div>
   </div>
 
@@ -26,19 +23,19 @@
     <!-- STRENGTH -->
     <div class="feedback-card">
       <h4><span>✅ </span> Strengths</h4>
-      <p><%= feedback.match(/Strength: (.*)/)?.[1] || "N/A" %></p>
+      <p><%= feedback.strength || "N/A" %></p>
     </div>
 
     <!-- IMPROVE -->
     <div class="feedback-card">
       <h4><span>⚠️ </span> Areas to Improve</h4>
-      <p><%= feedback.match(/Improve: (.*)/)?.[1] || "N/A" %></p>
+      <p><%= feedback.improvement || "N/A" %></p>
     </div>
 
     <!-- PERFECT ANSWER -->
     <div class="feedback-card">
       <h4><span>🏆 </span> Perfect Answer</h4>
-      <p><%= feedback.match(/Perfect Answer: (.*)/)?.[1] || "N/A" %></p>
+      <p><%= feedback.perfectAnswer || "N/A" %></p>
     </div>
 
     <!-- USER ANSWER -->
