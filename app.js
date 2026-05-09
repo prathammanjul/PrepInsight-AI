@@ -32,9 +32,11 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
 // ------------------ DATABASE ------------------
+const dbURL = process.env.ATLASDB_URL;
+
 mongoose
-  .connect("mongodb://127.0.0.1:27017/interviewPrepDB")
-  .then(() => console.log("MongoDB Connected ✅"))
+  .connect(dbURL)
+  .then(() => console.log("MongoDB Connected "))
   .catch((err) => console.log(err));
 
 // ------------------ SESSION ------------------

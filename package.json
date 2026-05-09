@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "v18.20.8"
+  },
   "name": "interviewprep",
   "version": "1.0.0",
   "description": "",
