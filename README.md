@@ -20,7 +20,7 @@
 
 **PrepInsight AI** is a full-stack, production-grade AI SaaS platform that transforms how candidates prepare for job interviews and craft their resumes. Powered by **OpenAI's GPT API**, it delivers real-time, intelligent feedback on interview answers and resume content — offering scoring, gap analysis, and actionable improvement suggestions — all within a seamless, authenticated web experience.
 
-[🚀 Live Demo](#)
+[🚀 Live Demo](https://prepinsight-ai.onrender.com/login)
 
 </div>
 
